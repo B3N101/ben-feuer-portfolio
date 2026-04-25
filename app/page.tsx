@@ -1,65 +1,145 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { Intro } from "@/components/Intro";
+import { TopNav } from "@/components/TopNav";
+import { SideRail } from "@/components/SideRail";
+import { ScrollCue } from "@/components/ScrollCue";
+import { Hero } from "@/components/Hero";
+import { ProjectSection } from "@/components/ProjectSection";
+import { About } from "@/components/About";
+import { PROJECTS } from "@/lib/projects";
 
 export default function Home() {
+  const [introDone, setIntroDone] = useState(false);
+  const [active, setActive] = useState(0);
+  const [explode, setExplode] = useState(0);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const p = el.scrollTop / (el.scrollHeight - el.clientHeight);
+      setScrollProgress(p);
+      const total = PROJECTS.length;
+      const within = Math.max(
+        0,
+        Math.min(total - 1, ((p - 0.12) / 0.76) * total),
+      );
+      setActive(Math.floor(within));
+      const localP = within - Math.floor(within);
+      const ex = localP < 0.5 ? localP * 2 : (1 - localP) * 2;
+      setExplode(Math.max(0, Math.min(1, ex)));
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const handleSelect = (i: number) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const targetP = 0.12 + ((i + 0.25) / PROJECTS.length) * 0.76;
+    el.scrollTo({
+      top: targetP * (el.scrollHeight - el.clientHeight),
+      behavior: "smooth",
+    });
+  };
+
+  const scrollToWork = () => handleSelect(0);
+
+  const scrollToContact = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollTo({
+      top: el.scrollHeight - el.clientHeight,
+      behavior: "smooth",
+    });
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "#07090d",
+        color: "#FFFAEC",
+        fontFamily: "var(--font-display), sans-serif",
+        overflow: "hidden",
+      }}
+    >
+      {!introDone && <Intro onDone={() => setIntroDone(true)} />}
+
+      <TopNav onWork={scrollToWork} onContact={scrollToContact} />
+      <SideRail activeProject={active} onSelect={handleSelect} showContact={scrollProgress > 0.88} />
+
+      <div
+        style={{
+          position: "absolute",
+          bottom: 24,
+          left: 24,
+          zIndex: 20,
+          fontFamily: "var(--font-mono), monospace",
+          fontSize: 11,
+          color: "rgba(255,250,236,0.6)",
+          letterSpacing: "0.25em",
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+        }}
+      >
+        <span style={{ color: "#4FC3FF", fontWeight: 700 }}>
+          {String(active + 1).padStart(2, "0")}
+        </span>
+        <span style={{ opacity: 0.4 }}>/</span>
+        <span style={{ opacity: 0.6 }}>
+          {String(PROJECTS.length).padStart(2, "0")}
+        </span>
+      </div>
+
+      <div
+        style={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: 2,
+          background: "rgba(255,250,236,0.06)",
+          zIndex: 20,
+        }}
+      >
+        <div
+          style={{
+            width: `${scrollProgress * 100}%`,
+            height: "100%",
+            background: "linear-gradient(90deg, #4FC3FF, #FFFAEC, #FF7A1A)",
+            transition: "width 100ms linear",
+          }}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </div>
+
+      <div
+        ref={scrollRef}
+        style={{
+          position: "absolute",
+          inset: 0,
+          overflowY: "auto",
+          scrollSnapType: "y mandatory",
+        }}
+      >
+        <Hero onViewWork={scrollToWork} />
+        {PROJECTS.map((p, i) => (
+          <ProjectSection
+            key={p.id}
+            project={p}
+            explode={active === i ? explode : 0}
+          />
+        ))}
+        <About />
+      </div>
+
+      <ScrollCue visible={scrollProgress < 0.05} />
     </div>
   );
 }
