@@ -50,13 +50,21 @@ export function TopNav({ onWork, onContact }: Props) {
           gap: 10,
         }}
       >
-        <svg width="22" height="22" viewBox="0 0 22 22">
-          <path
-            d="M 4 18 L 4 4 L 16 4 L 16 8 L 8 8 L 8 10 L 14 10 L 14 14 L 8 14 L 8 18 Z"
-            fill="#FF7A1A"
-          />
-          <rect x="17" y="4" width="1" height="14" fill="#4FC3FF" />
-        </svg>
+        <span
+          style={{
+            backgroundImage:
+              "linear-gradient(180deg, #FFFAEC 0%, #FF7A1A 60%, #FF3D2E 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
+            fontSize: 20,
+            fontWeight: 800,
+            letterSpacing: "-0.05em",
+            lineHeight: 1,
+          }}
+        >
+          BF
+        </span>
         Feuer<span style={{ color: "#FF7A1A" }}>.</span>
       </div>
 
