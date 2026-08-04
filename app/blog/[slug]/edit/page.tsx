@@ -1,14 +1,23 @@
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
-import { createPost } from "@/app/blog/actions";
+import { getPost } from "@/lib/posts";
+import { updatePost } from "@/app/blog/actions";
 import { PostEditor } from "@/components/blog/PostEditor";
 
-export default async function NewPostPage() {
+type Props = { params: Promise<{ slug: string }> };
+
+export default async function EditPostPage({ params }: Props) {
+  const { slug } = await params;
   const session = await auth();
 
   if (session?.user?.email !== process.env.ADMIN_EMAIL) {
-    redirect("/blog");
+    redirect(`/blog/${slug}`);
   }
+
+  const post = getPost(slug);
+  if (!post) notFound();
+
+  const action = updatePost.bind(null, post.id);
 
   return (
     <div>
@@ -22,7 +31,7 @@ export default async function NewPostPage() {
           marginBottom: 16,
         }}
       >
-        ◆ New Post
+        ◆ Edit Post
       </div>
       <h1
         style={{
@@ -33,9 +42,14 @@ export default async function NewPostPage() {
           color: "#FFFAEC",
         }}
       >
-        Write something
+        {post.title}
       </h1>
-      <PostEditor action={createPost} />
+      <PostEditor
+        action={action}
+        defaultTitle={post.title}
+        defaultContent={post.content}
+        submitLabel="Save changes →"
+      />
     </div>
   );
 }
