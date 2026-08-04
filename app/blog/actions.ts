@@ -21,7 +21,7 @@ export async function createPost(formData: FormData) {
   if (!title || !content) throw new Error("Title and content are required");
 
   const baseSlug = slugify(title);
-  const posts = readPosts();
+  const posts = await readPosts();
 
   let slug = baseSlug;
   let i = 2;
@@ -35,7 +35,7 @@ export async function createPost(formData: FormData) {
     createdAt: new Date().toISOString(),
   };
 
-  writePosts([post, ...posts]);
+  await writePosts([post, ...posts]);
   redirect(`/blog/${slug}`);
 }
 
@@ -47,12 +47,12 @@ export async function updatePost(id: string, formData: FormData) {
   const content = (formData.get("content") as string).trim();
   if (!title || !content) throw new Error("Title and content are required");
 
-  const posts = readPosts();
+  const posts = await readPosts();
   const idx = posts.findIndex((p) => p.id === id);
   if (idx === -1) throw new Error("Post not found");
 
   posts[idx] = { ...posts[idx], title, content, updatedAt: new Date().toISOString() };
-  writePosts(posts);
+  await writePosts(posts);
 
   revalidatePath(`/blog/${posts[idx].slug}`);
   revalidatePath("/blog");
@@ -63,13 +63,13 @@ export async function deletePost(id: string) {
   const session = await auth();
   if (!isAdmin(session?.user?.email)) throw new Error("Unauthorized");
 
-  const posts = readPosts();
+  const posts = await readPosts();
   const post = posts.find((p) => p.id === id);
-  writePosts(posts.filter((p) => p.id !== id));
+  await writePosts(posts.filter((p) => p.id !== id));
 
-  // Delete associated comments too
   if (post) {
-    writeComments(readComments().filter((c) => c.postSlug !== post.slug));
+    const comments = await readComments();
+    await writeComments(comments.filter((c) => c.postSlug !== post.slug));
   }
 
   redirect("/blog");
@@ -94,7 +94,8 @@ export async function addComment(formData: FormData) {
     createdAt: new Date().toISOString(),
   };
 
-  writeComments([...readComments(), comment]);
+  const comments = await readComments();
+  await writeComments([...comments, comment]);
   revalidatePath(`/blog/${postSlug}`);
 }
 
@@ -102,9 +103,9 @@ export async function deleteComment(id: string) {
   const session = await auth();
   if (!isAdmin(session?.user?.email)) throw new Error("Unauthorized");
 
-  const comments = readComments();
+  const comments = await readComments();
   const comment = comments.find((c) => c.id === id);
-  writeComments(comments.filter((c) => c.id !== id));
+  await writeComments(comments.filter((c) => c.id !== id));
 
   if (comment) revalidatePath(`/blog/${comment.postSlug}`);
 }

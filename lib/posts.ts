@@ -1,7 +1,7 @@
-import { readFileSync, writeFileSync } from "fs";
-import { join } from "path";
+import { Redis } from "@upstash/redis";
 
-const POSTS_FILE = join(process.cwd(), "data", "posts.json");
+const redis = Redis.fromEnv();
+const KEY = "blog:posts";
 
 export type Post = {
   id: string;
@@ -12,16 +12,13 @@ export type Post = {
   updatedAt?: string;
 };
 
-export function readPosts(): Post[] {
-  try {
-    return JSON.parse(readFileSync(POSTS_FILE, "utf-8")) as Post[];
-  } catch {
-    return [];
-  }
+export async function readPosts(): Promise<Post[]> {
+  const posts = await redis.get<Post[]>(KEY);
+  return posts ?? [];
 }
 
-export function writePosts(posts: Post[]): void {
-  writeFileSync(POSTS_FILE, JSON.stringify(posts, null, 2));
+export async function writePosts(posts: Post[]): Promise<void> {
+  await redis.set(KEY, posts);
 }
 
 export function slugify(title: string): string {
@@ -33,6 +30,7 @@ export function slugify(title: string): string {
     .replace(/-+/g, "-");
 }
 
-export function getPost(slug: string): Post | undefined {
-  return readPosts().find((p) => p.slug === slug);
+export async function getPost(slug: string): Promise<Post | undefined> {
+  const posts = await readPosts();
+  return posts.find((p) => p.slug === slug);
 }

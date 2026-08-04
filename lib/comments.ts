@@ -1,7 +1,7 @@
-import { readFileSync, writeFileSync } from "fs";
-import { join } from "path";
+import { Redis } from "@upstash/redis";
 
-const COMMENTS_FILE = join(process.cwd(), "data", "comments.json");
+const redis = Redis.fromEnv();
+const KEY = "blog:comments";
 
 export type Comment = {
   id: string;
@@ -12,18 +12,16 @@ export type Comment = {
   createdAt: string;
 };
 
-export function readComments(): Comment[] {
-  try {
-    return JSON.parse(readFileSync(COMMENTS_FILE, "utf-8")) as Comment[];
-  } catch {
-    return [];
-  }
+export async function readComments(): Promise<Comment[]> {
+  const comments = await redis.get<Comment[]>(KEY);
+  return comments ?? [];
 }
 
-export function writeComments(comments: Comment[]): void {
-  writeFileSync(COMMENTS_FILE, JSON.stringify(comments, null, 2));
+export async function writeComments(comments: Comment[]): Promise<void> {
+  await redis.set(KEY, comments);
 }
 
-export function getCommentsForPost(slug: string): Comment[] {
-  return readComments().filter((c) => c.postSlug === slug);
+export async function getCommentsForPost(slug: string): Promise<Comment[]> {
+  const all = await readComments();
+  return all.filter((c) => c.postSlug === slug);
 }

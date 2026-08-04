@@ -13,12 +13,11 @@ type Props = { params: Promise<{ slug: string }> };
 
 export default async function PostPage({ params }: Props) {
   const { slug } = await params;
-  const post = getPost(slug);
+  const [post, session] = await Promise.all([getPost(slug), auth()]);
   if (!post) notFound();
 
-  const session = await auth();
   const isAdmin = session?.user?.email === process.env.ADMIN_EMAIL;
-  const comments = getCommentsForPost(slug);
+  const comments = await getCommentsForPost(slug);
   const html = await marked.parse(post.content);
 
   return (

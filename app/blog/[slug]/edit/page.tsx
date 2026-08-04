@@ -14,7 +14,7 @@ export default async function EditPostPage({ params }: Props) {
     redirect(`/blog/${slug}`);
   }
 
-  const post = getPost(slug);
+  const post = await getPost(slug);
   if (!post) notFound();
 
   const action = updatePost.bind(null, post.id);
