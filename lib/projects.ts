@@ -78,5 +78,6 @@ export const CONTACT = {
   email: "benjamin.m.feuer@gmail.com",
   linkedin: "linkedin.com/in/benjamin-feuer",
   github: "github.com/B3N101",
-  school: "Purdue University · Mechanical Engineering",
+  school: "University of Michigan · Mechanical Engineering",
+  location: "Ann Arbor, MI · NYC",
 };

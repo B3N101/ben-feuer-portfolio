@@ -65,7 +65,19 @@ export function Hero({ onViewWork }: { onViewWork?: () => void }) {
             textTransform: "uppercase",
           }}
         >
-          Mechanical Engineering Student · Purdue University
+          Mechanical Engineering Student · University of Michigan
+        </div>
+        <div
+          style={{
+            marginTop: 8,
+            fontFamily: "var(--font-mono), monospace",
+            fontSize: 11,
+            letterSpacing: "0.2em",
+            color: "rgba(255,250,236,0.45)",
+            textTransform: "uppercase",
+          }}
+        >
+          Ann Arbor, MI · NYC
         </div>
         <p
           style={{

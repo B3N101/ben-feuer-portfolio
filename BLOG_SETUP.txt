@@ -1,0 +1,76 @@
+BLOG SETUP INSTRUCTIONS
+=======================
+
+Step 1 — Restart the dev server
+--------------------------------
+The blog routes were added while the server was running.
+Turbopack doesn't always pick up new directories automatically.
+
+  Ctrl-C to stop the server, then:
+  pnpm dev
+
+
+Step 2 — Set up Google OAuth
+------------------------------
+1. Go to: https://console.cloud.google.com
+2. Create a new project (or select an existing one)
+3. Go to: APIs & Services → Credentials
+4. Click: Create Credentials → OAuth 2.0 Client ID
+5. Application type: Web application
+6. Name it anything (e.g. "Portfolio Blog")
+7. Under "Authorized redirect URIs", add:
+     http://localhost:3000/api/auth/callback/google
+   (and for production, add your live domain too, e.g.:
+     https://yoursite.com/api/auth/callback/google)
+8. Click Create
+9. Copy the Client ID and Client Secret
+
+
+Step 3 — Fill in .env.local
+-----------------------------
+Open the file: .env.local (already created in the project root)
+Fill in the two blank values:
+
+  AUTH_GOOGLE_ID=paste-your-client-id-here
+  AUTH_GOOGLE_SECRET=paste-your-client-secret-here
+
+AUTH_SECRET and ADMIN_EMAIL are already filled in.
+Do NOT commit .env.local to git — it's in .gitignore.
+
+
+Step 4 — Publish a post
+-------------------------
+1. Go to: http://localhost:3000/blog/new
+2. Click "Sign in with Google"
+3. Sign in with benjamin.m.feuer@gmail.com
+4. Write your post (Markdown supported)
+5. Click Publish
+
+The post is saved to: data/posts.json
+To make it live on your deployed site, commit and push:
+  git add data/posts.json
+  git commit -m "add blog post"
+  git push
+
+
+Step 5 — Deploy (Google OAuth for production)
+----------------------------------------------
+When you deploy your site, go back to Google Cloud Console
+and add your production redirect URI to the same OAuth credential:
+  https://yoursite.com/api/auth/callback/google
+
+Then set the same env vars in your hosting provider
+(Vercel → Project Settings → Environment Variables, etc.)
+
+
+NOTES
+-----
+- The entire blog (listing, reading, writing) requires sign-in.
+  Unauthenticated visitors are redirected to the Google sign-in page.
+- Only your Gmail (benjamin.m.feuer@gmail.com) can sign in.
+  Anyone else who tries will be blocked automatically.
+- Posts are stored in data/posts.json. Back it up or keep
+  it committed to git so posts survive redeployments.
+- Markdown is fully supported in posts: headings, bold,
+  italic, code blocks, links, blockquotes, lists.
+- You can delete a post by visiting it while signed in.

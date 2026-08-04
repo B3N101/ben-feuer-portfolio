@@ -16,7 +16,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Ben Feuer · Mechanical Engineering Portfolio",
   description:
-    "Mechanical Engineering student at Purdue. Combat robots, competition platforms, and the mechanisms in between.",
+    "Mechanical Engineering student at University of Michigan. Combat robots, competition platforms, and the mechanisms in between.",
 };
 
 export default function RootLayout({

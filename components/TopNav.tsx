@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 type Props = {
   onWork?: () => void;
   onContact?: () => void;
@@ -110,6 +112,12 @@ export function TopNav({ onWork, onContact }: Props) {
         <button type="button" onClick={onContact} style={linkStyle}>
           Contact
         </button>
+        <Link
+          href="/blog"
+          style={{ ...linkStyle, color: "#4FC3FF", textDecoration: "none" }}
+        >
+          Blog
+        </Link>
       </div>
 
       <div
@@ -124,9 +132,9 @@ export function TopNav({ onWork, onContact }: Props) {
           color: "rgba(255,250,236,0.45)",
         }}
       >
-        <span>◉ WEST LAFAYETTE · IN</span>
-        <span>—</span>
-        <span style={{ color: "#4FC3FF" }}>AVAILABLE · SUMMER &apos;26</span>
+        <span>◉ ANN ARBOR, MI</span>
+        <span style={{ color: "rgba(255,250,236,0.2)" }}>|</span>
+        <span>NYC</span>
       </div>
     </div>
   );

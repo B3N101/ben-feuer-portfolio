@@ -29,6 +29,7 @@ export function About() {
             ["LINKEDIN", CONTACT.linkedin],
             ["GITHUB", CONTACT.github],
             ["SCHOOL", CONTACT.school],
+            ["LOCATION", CONTACT.location],
           ] as const
         ).map(([k, v]) => (
           <div
