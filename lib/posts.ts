@@ -1,6 +1,4 @@
-import { Redis } from "@upstash/redis";
-
-const redis = Redis.fromEnv();
+import { redis } from "@/lib/redis";
 const KEY = "blog:posts";
 
 export type Post = {
