@@ -11,12 +11,14 @@ import * as THREE from "three";
 import { ModelWithFallback } from "./ModelWithFallback";
 
 type Props = {
-  url?: string;
+  url: string;
   explode: number;
   accent?: string;
   interactive?: boolean;
   idTag?: string;
   badge?: string;
+  background?: string;
+  zoom?: boolean;
 };
 
 export function CADViewer({
@@ -26,6 +28,8 @@ export function CADViewer({
   interactive = true,
   idTag,
   badge,
+  background = "#0a0d12",
+  zoom = true,
 }: Props) {
   return (
     <div style={{ position: "absolute", inset: 0 }}>
@@ -34,24 +38,25 @@ export function CADViewer({
         dpr={[1, 2]}
         gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}
       >
-        <color attach="background" args={["#0a0d12"]} />
-        <ambientLight intensity={0.3} />
+        <color attach="background" args={[background]} />
+        <ambientLight intensity={0.5} />
         <directionalLight position={[5, 5, 5]} intensity={0.8} />
+        <ModelWithFallback url={url} explode={explode} />
         <Suspense fallback={null}>
-          <ModelWithFallback url={url} explode={explode} color={accent} />
           <Environment preset="warehouse" />
-          <ContactShadows
-            position={[0, -0.5, 0]}
-            opacity={0.6}
-            scale={6}
-            blur={2}
-            far={2}
-          />
         </Suspense>
+        <ContactShadows
+          position={[0, 0, 0]}
+          opacity={0.45}
+          scale={6}
+          blur={2}
+          far={2}
+        />
         {interactive && (
           <OrbitControls
+            makeDefault
             enablePan={true}
-            enableZoom={true}
+            enableZoom={zoom}
             autoRotate={false}
             minPolarAngle={0}
             maxPolarAngle={Math.PI}

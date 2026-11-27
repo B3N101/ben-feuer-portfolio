@@ -13,14 +13,14 @@
 
 html,
 body {
-  background: #07090d;
-  color: #fffaec;
+  background: #ffffff;
+  color: #14161a;
   margin: 0;
   padding: 0;
 }
 
 body {
-  font-family: var(--font-display), system-ui, sans-serif;
+  font-family: var(--font-body), system-ui, sans-serif;
 }
 
 * {

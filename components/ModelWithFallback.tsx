@@ -1,38 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Component, Suspense, type ReactNode } from "react";
+import { Bounds, Center } from "@react-three/drei";
 import { Model } from "./Model";
-import { Placeholder } from "./Placeholder";
 
-export function ModelWithFallback({
-  url,
-  explode,
-  color,
-}: {
-  url?: string;
-  explode: number;
-  color?: string;
-}) {
-  const [exists, setExists] = useState<boolean | null>(null);
+// Loads the GLB and frames the camera on it once it arrives. Renders nothing
+// while loading or if the file fails; ModelViewer shows the loading state.
+export function ModelWithFallback({ url, explode }: { url: string; explode: number }) {
+  return (
+    <LoadErrorBoundary>
+      <Suspense fallback={null}>
+        <Bounds fit clip observe margin={1.5}>
+          <Center bottom>
+            <Model url={url} explode={explode} />
+          </Center>
+        </Bounds>
+      </Suspense>
+    </LoadErrorBoundary>
+  );
+}
 
-  useEffect(() => {
-    if (!url) {
-      setExists(false);
-      return;
-    }
-    let cancelled = false;
-    fetch(url, { method: "HEAD" })
-      .then((r) => {
-        if (!cancelled) setExists(r.ok);
-      })
-      .catch(() => !cancelled && setExists(false));
-    return () => {
-      cancelled = true;
-    };
-  }, [url]);
-
-  if (exists === null || !url || !exists) {
-    return <Placeholder explode={explode} color={color} />;
+class LoadErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
   }
-  return <Model url={url} explode={explode} />;
+  render() {
+    return this.state.failed ? null : this.props.children;
+  }
 }
