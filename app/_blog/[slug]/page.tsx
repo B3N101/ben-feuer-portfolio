@@ -4,7 +4,7 @@ import { marked } from "marked";
 import { auth } from "@/auth";
 import { getPost } from "@/lib/posts";
 import { getCommentsForPost } from "@/lib/comments";
-import { deletePost, deleteComment } from "@/app/blog/actions";
+import { deletePost, deleteComment } from "@/app/_blog/actions";
 import { CommentForm } from "@/components/blog/CommentForm";
 
 export const dynamic = "force-dynamic";

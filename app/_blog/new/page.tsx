@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import { createPost } from "@/app/blog/actions";
+import { createPost } from "@/app/_blog/actions";
 import { PostEditor } from "@/components/blog/PostEditor";
 
 export default async function NewPostPage() {

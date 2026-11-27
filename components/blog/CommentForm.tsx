@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { addComment } from "@/app/blog/actions";
+import { addComment } from "@/app/_blog/actions";
 
 type Props = {
   postSlug: string;

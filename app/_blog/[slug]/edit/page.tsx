@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getPost } from "@/lib/posts";
-import { updatePost } from "@/app/blog/actions";
+import { updatePost } from "@/app/_blog/actions";
 import { PostEditor } from "@/components/blog/PostEditor";
 
 type Props = { params: Promise<{ slug: string }> };
